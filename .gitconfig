@@ -1,3 +1,6 @@
+[core]
+  editor = vim
 [user]
   name = Gonzalo Bulnes Guilpain
   email = gonzalo.bulnes@redbubble.com
+
