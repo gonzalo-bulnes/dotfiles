@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+# Switch between AWS environments
+#
+# Author: Joffrey 'Lassi' Lassignardie <joffrey.lassignardie@redbubble.com>
+# Augmented by: Gonzalo Bulnes Guilpain <gonzalo.bulnes@redbubble.com>
+#
+# Usage:
+#
+#     source aws-env staging # set credentials for non-production
+#
+
+if [ ! -d ~/src/bash-ini-parser ]; then
+    echo -e "Retrieving dependency: bash-ini-parser..."
+    git clone git@github.com:albfan/bash-ini-parser.git ~/src/bash-ini-parser
+fi
+source ~/src/bash-ini-parser/bash-ini-parser
+
+
+if [ ! -f ~/.aws/credentials ]; then
+    echo -e "\033[1;31mPlease set your AWS credentials in ~/.aws/credentials\033[0m\n"
+    cat <<HELP
+Example ~/.aws/credentials:
+
+    [default]
+      aws_access_key_id = ...
+      aws_secret_access_key = ...
+    [production]
+      aws_access_key_id = ...
+      aws_secret_access_key = ...
+
+HELP
+  return 1
+fi
+
+
+# Headers slighlty modified from http://www.patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=PRODUCTION
+read -d '' non_production_header <<- HEADER
+▓▓▓╮   ▓▓╮ ▓▓▓▓▓▓╮ ▓▓▓╮   ▓▓╮      ▓▓▓▓▓▓╮ ▓▓▓▓▓▓╮  ▓▓▓▓▓▓╮ ▓▓▓▓▓▓╮ ▓▓╮   ▓▓╮ ▓▓▓▓▓▓╮▓▓▓▓▓▓▓▓╮▓▓╮ ▓▓▓▓▓▓╮ ▓▓▓╮   ▓▓╮
+▓▓▓▓╮  ▓▓│▓▓╭───▓▓╮▓▓▓▓╮  ▓▓│      ▓▓╭──▓▓╮▓▓╭──▓▓╮▓▓╭───▓▓╮▓▓╭──▓▓╮▓▓│   ▓▓│▓▓╭────╯╰──▓▓╭──╯▓▓│▓▓╭───▓▓╮▓▓▓▓╮  ▓▓│
+▓▓╭▓▓╮ ▓▓│▓▓│   ▓▓│▓▓╭▓▓╮ ▓▓│▓▓▓▓▓╮▓▓▓▓▓▓╭╯▓▓▓▓▓▓╭╯▓▓│   ▓▓│▓▓│  ▓▓│▓▓│   ▓▓│▓▓│        ▓▓│   ▓▓│▓▓│   ▓▓│▓▓╭▓▓╮ ▓▓│
+▓▓│╰▓▓╮▓▓│▓▓│   ▓▓│▓▓│╰▓▓╮▓▓│╰────╯▓▓╭───╯ ▓▓╭──▓▓╮▓▓│   ▓▓│▓▓│  ▓▓│▓▓│   ▓▓│▓▓│        ▓▓│   ▓▓│▓▓│   ▓▓│▓▓│╰▓▓╮▓▓│
+▓▓│ ╰▓▓▓▓│╰▓▓▓▓▓▓╭╯▓▓│ ╰▓▓▓▓│      ▓▓│     ▓▓│  ▓▓│╰▓▓▓▓▓▓╭╯▓▓▓▓▓▓╭╯╰▓▓▓▓▓▓╭╯╰▓▓▓▓▓▓╮   ▓▓│   ▓▓│╰▓▓▓▓▓▓╭╯▓▓│ ╰▓▓▓▓│
+╰─╯  ╰───╯ ╰─────╯ ╰─╯  ╰───╯      ╰─╯     ╰─╯  ╰─╯ ╰─────╯ ╰─────╯  ╰─────╯  ╰─────╯   ╰─╯   ╰─╯ ╰─────╯ ╰─╯  ╰───╯
+HEADER
+
+read -d '' production_header <<- HEADER
+▓▓▓▓▓▓╮ ▓▓▓▓▓▓╮  ▓▓▓▓▓▓╮ ▓▓▓▓▓▓╮ ▓▓╮   ▓▓╮ ▓▓▓▓▓▓╮▓▓▓▓▓▓▓▓╮▓▓╮ ▓▓▓▓▓▓╮ ▓▓▓╮   ▓▓╮
+▓▓╭──▓▓╮▓▓╭──▓▓╮▓▓╭───▓▓╮▓▓╭──▓▓╮▓▓│   ▓▓│▓▓╭────╯╰──▓▓╭──╯▓▓│▓▓╭───▓▓╮▓▓▓▓╮  ▓▓│
+▓▓▓▓▓▓╭╯▓▓▓▓▓▓╭╯▓▓│   ▓▓│▓▓│  ▓▓│▓▓│   ▓▓│▓▓│        ▓▓│   ▓▓│▓▓│   ▓▓│▓▓╭▓▓╮ ▓▓│
+▓▓╭───╯ ▓▓╭──▓▓╮▓▓│   ▓▓│▓▓│  ▓▓│▓▓│   ▓▓│▓▓│        ▓▓│   ▓▓│▓▓│   ▓▓│▓▓│╰▓▓╮▓▓│
+▓▓│     ▓▓│  ▓▓│╰▓▓▓▓▓▓╭╯▓▓▓▓▓▓╭╯╰▓▓▓▓▓▓╭╯╰▓▓▓▓▓▓╮   ▓▓│   ▓▓│╰▓▓▓▓▓▓╭╯▓▓│ ╰▓▓▓▓│
+╰─╯     ╰─╯  ╰─╯ ╰─────╯ ╰─────╯  ╰─────╯  ╰─────╯   ╰─╯   ╰─╯ ╰─────╯ ╰─╯  ╰───╯
+HEADER
+
+
+function switch_to_non_production {
+  echo -e "AWS credentials set for:"
+  echo -e "\n\033[1;34m$non_production_header\033[0m"
+  echo -e "\nFeel free to break things!\n"
+
+  cfg_parser "$HOME/.aws/credentials"
+  cfg_section_default
+
+  unset AWS_ACCESS_KEY_ID
+  export AWS_ACCESS_KEY_ID=$aws_access_key_id
+  unset AWS_SECRET_ACCESS_KEY
+  export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
+  unset KUBECONFIG
+  export KUBECONFIG=~/src/kubernetes/kubeconfig-staging
+}
+
+function switch_to_production {
+  echo -e "AWS credentials set for:"
+  echo -e "\n\033[1;33m$production_header\033[0m\n"
+
+  cfg_parser "$HOME/.aws/credentials"
+  cfg_section_production
+
+  unset AWS_ACCESS_KEY_ID
+  export AWS_ACCESS_KEY_ID=$aws_access_key_id
+  unset AWS_SECRET_ACCESS_KEY
+  export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
+  unset KUBECONFIG
+  export KUBECONFIG=~/src/kubernetes/kubeconfig-staging
+}
+
+case "$1" in
+  staging)
+    switch_to_non_production
+  ;;
+  non-production)
+    switch_to_non_production
+  ;;
+  production)
+    switch_to_production
+  ;;
+  *)
+    echo -e "\033[1;31mUnknown environment: $1.\033[0m\nValid values are: staging, non-production, production"
+  ;;
+esac
+
+export AWS_DEFAULT_REGION=us-east-1
