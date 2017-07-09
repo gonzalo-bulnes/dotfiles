@@ -30,3 +30,22 @@ rb-up:
 rb-down:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble down && cd - '
 
+delivery-dates-up:
+  command: 'cd ~/src/delivery-dates && docker-compose -f dev/vagrant/docker-compose.yml -p delivery_dates up -d && cd - '
+delivery-dates-down:
+  command: 'cd ~/src/delivery-dates && docker-compose -f dev/vagrant/docker-compose.yml -p delivery_dates down && cd - '
+
+magickraum-up:
+  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum up -d && cd - '
+magickraum-up:
+  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum down && cd - '
+
+renderraum-up:
+  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum up -d && cd - '
+renderraum-down:
+  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum down && cd - '
+
+janus-up:
+  command: 'cd ~/src/janus && docker-compose -f dev/vagrant/docker-compose.yml -p janus up -d && cd - '
+janus-down:
+  command: 'cd ~/src/janus && docker-compose -f dev/vagrant/docker-compose.yml -p janus down && cd - '
