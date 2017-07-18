@@ -1,4 +1,8 @@
 alias aura='cd ~/src/go/src/github.com/redbubble/aura'
 alias aura-deploy='cd ~/src/aura-deploy'
+alias delivery-dates='cd ~/src/delivery-dates'
 alias dotfiles='cd ~/src/dotfiles'
+alias imagehaus='cd ~/src/imagehaus'
+alias magickraum='cd ~/src/magickraum'
+alias renderraum='cd ~/src/renderraum'
 alias rb='cd ~/src/redbubble'
