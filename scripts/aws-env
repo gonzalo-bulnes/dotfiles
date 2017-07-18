@@ -82,7 +82,7 @@ function switch_to_production {
   unset AWS_SECRET_ACCESS_KEY
   export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key
   unset KUBECONFIG
-  export KUBECONFIG=~/src/kubernetes/kubeconfig-staging
+  export KUBECONFIG=~/src/kubernetes/kubeconfig-production
 }
 
 case "$1" in
