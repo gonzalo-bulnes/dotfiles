@@ -11,6 +11,9 @@
 #  unit_test: '[ true = true ]'                        # optional
 #  quiet: false                                        # optional
 
+dockerps:
+  command: 'docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}"'
+
 glog:
   command: 'git log --oneline --graph --decorate '
 gst:
@@ -18,34 +21,50 @@ gst:
 gclrb:
   command: 'git clone git@github.com:redbubble/$0 ~/src/$0 '
 
-proxy-up:
-  command: 'cd ~/src/docker-rev-proxy && docker-compose up -d && cd - '
-proxy-down:
-  command: 'cd ~/src/docker-rev-proxy && docker-compose down && cd - '
+ghub:
+  command: "firefox -new-tab https://github.com/$(git remote get-url --push origin | sed -r 's/.*://g' | sed -r 's/.git//g')/compare/$(git describe --all --contains) "
 
 rbrun:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble run --rm appserver '
+rbexec:
+  command: 'cd ~/src/redbubble && docker exec redbubble_appserver_1 '
 rb-up:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble up -d && cd - '
 rb-down:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble down && cd - '
+rblog:
+  command: 'docker logs -f redbubble_appserver_1 '
+rbreindex:
+  command: 'rbrun bundle exec rake search:reindex_all_works search:reindex_all_users search:commit '
+rbtranslate:
+  command: 'rbrun bundle exec rake i18n:translations:create_xxx '
 
 delivery-dates-up:
   command: 'cd ~/src/delivery-dates && docker-compose -f dev/vagrant/docker-compose.yml -p delivery_dates up -d && cd - '
 delivery-dates-down:
   command: 'cd ~/src/delivery-dates && docker-compose -f dev/vagrant/docker-compose.yml -p delivery_dates down && cd - '
 
-magickraum-up:
-  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum up -d && cd - '
-magickraum-up:
-  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum down && cd - '
-
-renderraum-up:
-  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum up -d && cd - '
-renderraum-down:
-  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum down && cd - '
+imagehaus-up:
+  command: 'cd ~/src/imagehaus && docker-compose -f dev/vagrant/docker-compose.yml -p imagehaus up -d && cd - '
+imagehaus-down:
+  command: 'cd ~/src/imagehaus && docker-compose -f dev/vagrant/docker-compose.yml -p imagehaus down && cd - '
 
 janus-up:
   command: 'cd ~/src/janus && docker-compose -f dev/vagrant/docker-compose.yml -p janus up -d && cd - '
 janus-down:
   command: 'cd ~/src/janus && docker-compose -f dev/vagrant/docker-compose.yml -p janus down && cd - '
+
+magickraum-up:
+  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum up -d && cd - '
+magickraum-down:
+  command: 'cd ~/src/magickraum && docker-compose -f dev/vagrant/docker-compose.yml -p magickraum down && cd - '
+
+proxy-up:
+  command: 'cd ~/src/docker-rev-proxy && docker-compose up -d && cd - '
+proxy-down:
+  command: 'cd ~/src/docker-rev-proxy && docker-compose down && cd - '
+
+renderraum-up:
+  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum up -d && cd - '
+renderraum-down:
+  command: 'cd ~/src/renderraum && docker-compose -f dev/vagrant/docker-compose.yml -p renderraum down && cd - '
