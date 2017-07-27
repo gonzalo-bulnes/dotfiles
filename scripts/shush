@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Run shush in a container
+#
+# This script will attempt to mirror the host paths by using volumes for the
+# following paths:
+#   * $(pwd)
+#   * $HOME if it's set
+#
+# You can add additional volumes (or any docker run options) using
+# the $SHUSH_OPTIONS environment variable.
+#
+
+
+set -e
+
+VERSION="latest"
+IMAGE="realestate/shush:$VERSION"
+
+
+# Setup volume mounts for compose config and context
+if [ "$(pwd)" != '/' ]; then
+    VOLUMES="-v $(pwd):$(pwd)"
+fi
+if [ -n "$HOME" ]; then
+    VOLUMES="$VOLUMES -v $HOME:$HOME -v $HOME:/root" # mount $HOME in /root to share docker.config
+fi
+
+exec docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY--rm $SHUSH_OPTIONS $VOLUMES -w "$(pwd)" $IMAGE "$@"
