@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Run node in a container
+#
+
+set -e
+
+VERSION="7.10-alpine"
+IMAGE="node:$VERSION"
+
+exec docker run --rm -e NPM_AUTH_TOKEN -w "$(pwd)" -v $(pwd):$(pwd) $IMAGE node "$@"
+
