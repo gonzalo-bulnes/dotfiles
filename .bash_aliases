@@ -1,5 +1,6 @@
 alias aura='cd ~/src/go/src/github.com/redbubble/aura'
 alias aura-deploy='cd ~/src/aura-deploy'
+alias bruegel='cd ~/src/go/src/github.com/gonzalo-bulnes/bruegel'
 alias megaphone='cd ~/src/go/src/github.com/redbubble/megaphone'
 alias megaphone-deploy='cd ~/src/megaphone-deploy'
 alias delivery-dates='cd ~/src/delivery-dates'
