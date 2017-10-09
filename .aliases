@@ -26,8 +26,10 @@ ghub:
 
 rbrun:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble run --rm appserver '
+rbruntest:
+  command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble run -e RAILS_ENV=test --rm appserver '
 rbexec:
-  command: 'cd ~/src/redbubble && docker exec redbubble_appserver_1 '
+  command: 'cd ~/src/redbubble && docker exec -it -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY redbubble_appserver_1 '
 rb-up:
   command: 'cd ~/src/redbubble && docker-compose -f dev/vagrant/docker-compose.yml -p redbubble up -d && cd - '
 rb-down:
@@ -38,6 +40,10 @@ rbreindex:
   command: 'rbrun bundle exec rake search:reindex_all_works search:reindex_all_users search:commit '
 rbtranslate:
   command: 'rbrun bundle exec rake i18n:translations:create_xxx '
+rball-up:
+  command: 'proxy-up && imagehaus-up && magickraum-up && renderraum-up && janus-up && rb-up'
+rball-down:
+  command: 'imagehaus-down && magickraum-down && renderraum-down && janus-down && rb-down && proxy-down'
 
 delivery-dates-up:
   command: 'cd ~/src/delivery-dates && docker-compose -f dev/vagrant/docker-compose.yml -p delivery_dates up -d && cd - '
